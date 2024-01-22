@@ -1,4 +1,5 @@
-FROM <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/ecom-base:latest
+# FROM 767397730645.dkr.ecr.ap-south-1.amazonaws.com/ecom-base:latest
+FROM <AWS_ACCOUNT_ID>.dkr.ecr.<AWS_REGION>.amazonaws.com/amcart-base:latest
 #from python:3.8
 
 ENV PATH="/appenv/bin:$PATH"
