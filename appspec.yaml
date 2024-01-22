@@ -1,0 +1,13 @@
+# Copyright Amazon.com, Inc. or its affiliates. All Rights Reserved.
+# SPDX-License-Identifier: MIT-0
+
+version: 0.0
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "<TASK_DEFINITION_ARN>"
+        LoadBalancerInfo:
+          ContainerName: "<CONTAINER_NAME>"
+          ContainerPort: <SERVICE_PORT>
+        PlatformVersion: "LATEST"

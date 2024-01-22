@@ -1,0 +1,48 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Build Dev prepare on `date`
+      - echo "Logging in to Amazon ECR... some env variable $IMAGE_REPO_NAME and account id $AWS_ACCOUNT_ID and image tag $IMAGE_TAG"
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
+      - IMAGE_TAG_VERSION=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image
+      - sed -i "s|<AWS_ACCOUNT_ID>|$AWS_ACCOUNT_ID|g" docker/dev/Dockerfile
+      - sed -i "s|<AWS_REGION>|$AWS_REGION|g" docker/dev/Dockerfile
+      - docker build -f docker/dev/Dockerfile -t $IMAGE_REPO_NAME:$IMAGE_TAG .
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG_VERSION
+      - docker tag $IMAGE_REPO_NAME:$IMAGE_TAG $REPOSITORY_URI:$IMAGE_TAG
+      - echo Preparing spec files in new folder
+      - mkdir Artifacts
+      - cp appspec.yaml Artifacts/appspec.yaml && cp taskdef.json Artifacts/taskdef.json
+      - echo Changing directory to the Artifacts directory
+      - cd Artifacts
+      - echo Preparating artifacts
+      - sed -i "s|<TASK_DEFINITION_ARN>|$TASK_DEFINITION_ARN|g" appspec.yaml
+      - sed -i "s|<TASK_DEFINITION_FAMILY>|$TASK_DEFINITION_FAMILY|g" taskdef.json
+      - sed -i "s|<CONTAINER_NAME>|$CONTAINER_NAME|g" appspec.yaml taskdef.json
+      - sed -i "s|<SERVICE_PORT>|$SERVICE_PORT|g" appspec.yaml taskdef.json
+      - sed -i "s|<ECS_ROLE>|$ECS_ROLE|g" taskdef.json
+      - sed -i "s|<ECS_TASK_ROLE>|$ECS_TASK_ROLE|g" taskdef.json
+      - sed -i "s|<REPO_URL>|$REPOSITORY_URI:$IMAGE_TAG|g" taskdef.json
+      - sed -i "s|<AWS_ACCOUNT_ID>|$AWS_ACCOUNT_ID|g" taskdef.json
+      - sed -i "s|<AWS_REGION>|$AWS_REGION|g" taskdef.json
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker push $REPOSITORY_URI:$IMAGE_TAG_VERSION
+      - echo Writing image definitions file...
+      - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: 'Artifacts'
+

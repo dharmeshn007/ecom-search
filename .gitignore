@@ -1,0 +1,12 @@
+# package directories
+node_modules
+jspm_packages
+.idea
+
+
+# Serverless directories
+.serverless
+__pycache__
+*.log
+src/*.log
+all.log
