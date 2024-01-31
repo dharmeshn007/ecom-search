@@ -35,7 +35,7 @@ class SchemaGenerator(OpenAPISchemaGenerator):
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="AmCart SearchAPI",
+        title="Ecom SearchAPI",
         default_version='v1',
     ),
     public=True,

@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 
 import datetime
 import os
+# import mimetypes
+# mimetypes.add_type("text/css", ".css", True)
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -56,6 +58,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     # 'aws_xray_sdk.ext.django.middleware.XRayMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -217,7 +220,7 @@ ELASTIC_SEARCH_URL = elk_base_url.format(user_name=elastic_search_user,
                                          host_port=elastic_search_port)
 print(ELASTIC_SEARCH_URL)
 
-# ELASTIC_SEARCH_URL = "http://localhost:9200"
+# ELASTIC_SEARCH_URL = "http://172.17.0.2:9200"
 
 ELASTICSEARCH_DSL = {
     'default': {
