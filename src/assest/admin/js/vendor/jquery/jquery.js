@@ -9061,7 +9061,7 @@ jQuery.extend( {
 			text: "text/plain",
 			html: "text/html",
 			xml: "application/xml, text/xml",
-			json: "application/json, text/javascript"
+			json: "application/json, text/javascript, application/javascript"
 		},
 
 		contents: {

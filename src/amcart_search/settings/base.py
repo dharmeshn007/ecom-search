@@ -217,12 +217,15 @@ ELASTIC_SEARCH_URL = elk_base_url.format(user_name=elastic_search_user,
                                          host_port=elastic_search_port)
 print(ELASTIC_SEARCH_URL)
 
+# ELASTIC_SEARCH_URL = "http://localhost:9200"
+
 ELASTICSEARCH_DSL = {
     'default': {
         'hosts': str(ELASTIC_SEARCH_URL),
         'timeout': 30,
     },
 }
+
 ELASTICSEARCH_DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%SZ'
 COSINE_SIMILARITY = float(os.environ.setdefault('COSINE_SIMILARITY','1.5'))
 # XRAY_RECORDER = {
